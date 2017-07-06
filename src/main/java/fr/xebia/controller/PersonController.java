@@ -1,34 +1,27 @@
 package fr.xebia.controller;
 
-import fr.xebia.pojo.Person;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import fr.xebia.model.Person;
+import java.util.stream.IntStream;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@RestController("/person")
+@RestController
 public class PersonController {
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    @ResponseBody
-    public Person getPerson() {
-        return Person.newRandomInstance();
-    }
+    @GetMapping(value = "/person", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<Person> getRandomPerson() {
 
-    @RequestMapping(value = "/mono", method = RequestMethod.GET)
-    @ResponseBody
-    public Mono<Person> getMonoPerson() {
         return Mono.just(Person.newRandomInstance());
     }
 
-    @RequestMapping(value = "/flux", method = RequestMethod.GET)
-    @ResponseBody
-    public Flux<Person> getFluxPerson() {
-        return Flux.just(Person.newRandomInstance(),
-            Person.newRandomInstance(),
-            Person.newRandomInstance());
-    }
+    @GetMapping(value = "/person/{numberOfPeople}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<Person> getRandomPeople(@PathVariable Integer numberOfPeople) {
 
+        return Flux.fromStream(IntStream.range(0, numberOfPeople)
+            .mapToObj(i -> Person.newRandomInstance()));
+    }
 }

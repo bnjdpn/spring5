@@ -1,4 +1,4 @@
-package fr.xebia.pojo;
+package fr.xebia.model;
 
 import java.util.UUID;
 
